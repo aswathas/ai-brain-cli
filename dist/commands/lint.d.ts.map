@@ -1,0 +1,1 @@
+{"version":3,"file":"lint.d.ts","sourceRoot":"","sources":["../../src/commands/lint.ts"],"names":[],"mappings":"AAoBA;;GAEG;AACH,wBAAsB,WAAW,CAC/B,OAAO,GAAE;IACP,GAAG,CAAC,EAAE,OAAO,CAAC;IACd,OAAO,CAAC,EAAE,OAAO,CAAC;CACd,GACL,OAAO,CAAC,IAAI,CAAC,CAsEf;AA6PD,eAAe,WAAW,CAAC"}
