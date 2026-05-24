@@ -157,7 +157,7 @@ const COMMANDS = [
     // Wiki
     '/attach', '/export', '/import', '/edit', '/delete',
     // Special
-    '/quote', '/remind', '/sync', '/version',
+    '/quote', '/remind', '/sync', '/version', '/graphify', '/graph', '/g',
 ];
 const PERSONAS = ['socrates', 'elon', 'carolyn', 'confucius', 'archimedes'];
 function completer(line) {
@@ -568,9 +568,11 @@ async function chatCommand(args = {}) {
                     printInfo('Retrying last message...');
                     rl.prompt();
                     return;
-                case 'cancel':
-                case 'x':
-                    printInfo('Cancelled');
+                case 'graphify':
+                case 'graph':
+                case 'g':
+                    printInfo('Generating knowledge graph...');
+                    await generateGraph(timeTravel, argStr);
                     rl.prompt();
                     return;
                 default:
@@ -851,6 +853,54 @@ function importWiki(wikiManager, filePath) {
     }
 }
 /**
+ * Generate knowledge graph visualization
+ */
+async function generateGraph(timeTravel, topic) {
+    const results = timeTravel.search(topic || 'decision', { limit: 20, type: 'all' });
+    if (results.decisions.length === 0 && results.interactions.length === 0) {
+        printInfo('No data found for graph. Make some decisions first!');
+        return;
+    }
+    console.log(chalk_1.default.bold.cyan('\n  ━━ Knowledge Graph ━━\n'));
+    // Build simple ASCII graph
+    const nodes = [];
+    const connections = [];
+    for (const d of results.decisions) {
+        const nodeId = d.title.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 20);
+        nodes.push(`[${chalk_1.default.yellow(d.title)}]`);
+    }
+    // Print as connected list
+    console.log(chalk_1.default.white('  Decisions & Relationships:\n'));
+    for (let i = 0; i < Math.min(nodes.length, 10); i++) {
+        if (i === 0) {
+            console.log(chalk_1.default.green(`  ┌─ ${nodes[i]}`));
+        }
+        else if (i === nodes.length - 1 || i === 9) {
+            console.log(chalk_1.default.green(`  └─ ${nodes[i]}`));
+        }
+        else {
+            console.log(chalk_1.default.green(`  ├─ ${nodes[i]}`));
+        }
+    }
+    // Generate Mermaid code
+    console.log(chalk_1.default.bold.cyan('\n  Mermaid Graph:\n'));
+    let mermaid = '```mermaid\ngraph TD\n';
+    for (const d of results.decisions.slice(0, 10)) {
+        const id = d.title.replace(/[^a-zA-Z0-9]/g, '-').substring(0, 15);
+        mermaid += `    ${chalk_1.default.cyan(id)}["${d.title}"]\n`;
+        if (d.summary) {
+            const relatedMatch = d.summary.match(/:?\s*(led to|caused|because of|inspired by)\s*([^,.]+)/i);
+            if (relatedMatch) {
+                const relatedId = relatedMatch[2].trim().replace(/[^a-zA-Z0-9]/g, '-').substring(0, 15);
+                mermaid += `    ${chalk_1.default.cyan(id)} --> ${chalk_1.default.green(relatedId)}\n`;
+            }
+        }
+    }
+    mermaid += '```';
+    console.log(chalk_1.default.dim(mermaid));
+    console.log();
+}
+/**
  * Print help with all commands
  */
 function printHelp() {
@@ -889,6 +939,7 @@ function printHelp() {
     /attach <path>    Attach a file to wiki
     /export            Export wiki as JSON
     /import <path>     Import wiki from JSON
+    /graphify [topic]  Visualize decision relationships
 
   Utility:
     /quote             Show random inspiration
