@@ -75,6 +75,11 @@ const DEFAULT_CONFIG = {
             baseURL: 'http://localhost:11434',
             defaultModel: 'llama3',
         },
+        minimax: {
+            type: 'minimax',
+            apiKey: process.env.MINIMAX_API_KEY || '',
+            defaultModel: 'MiniMax-Text-01',
+        },
     },
     personas: {
         socrates: {

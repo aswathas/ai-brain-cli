@@ -60,6 +60,16 @@ class WikiManager {
             path.join(this.wikiPath, 'interactions'),
             path.join(this.wikiPath, 'notes'),
             path.join(this.wikiPath, 'personas'),
+            path.join(this.wikiPath, 'profile'),
+            path.join(this.wikiPath, 'framework'),
+            path.join(this.wikiPath, 'skills'),
+            path.join(this.wikiPath, 'dumps'),
+            path.join(this.wikiPath, 'dumps', 'medical'),
+            path.join(this.wikiPath, 'dumps', 'financial'),
+            path.join(this.wikiPath, 'dumps', 'general'),
+            path.join(this.wikiPath, 'periodic'),
+            path.join(this.wikiPath, 'periodic', 'weekly'),
+            path.join(this.wikiPath, 'periodic', 'monthly'),
         ];
         for (const dir of dirs) {
             if (!fs.existsSync(dir)) {

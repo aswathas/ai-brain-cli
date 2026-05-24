@@ -46,8 +46,9 @@ program
   });
 
 // ============================================
-// CHAT COMMAND
+// CHAT IS DEFAULT (like Claude Code)
 // ============================================
+// Running `ai-brain` without any command starts chat
 program
   .command('chat')
   .description('Start an interactive chat REPL')
@@ -70,6 +71,37 @@ program
       process.exit(1);
     }
   });
+
+// Make chat the default command (no subcommand needed)
+program.action(async () => {
+  // Check if first time (no config or no wiki initialized)
+  const config = configStore.load();
+  const wikiManager = new WikiManager(config.wikiPath);
+
+  if (!wikiManager.isInitialized()) {
+    console.log(chalk.cyan('\n  First time setup detected!\n'));
+    try {
+      await initCommand();
+      console.log(chalk.green('\n  Setup complete! Starting chat...\n'));
+      await chatCommand({});
+    } catch (error: any) {
+      console.error(chalk.red('Init error:'), error.message);
+      process.exit(1);
+    }
+  } else {
+    // Not first time - start chat
+    try {
+      await chatCommand({});
+    } catch (error: any) {
+      console.error(chalk.red('Error:'), error.message);
+      process.exit(1);
+    }
+  }
+});
+
+// Make chat the default so `ai-brain` alone starts chat
+// But still allow `ai-brain help` etc to work
+// We handle this by checking if there's an unknown argument
 
 // ============================================
 // LOG COMMAND
@@ -459,24 +491,6 @@ program
 // ============================================
 // MAIN
 // ============================================
-
-// If no arguments, show help
-if (process.argv.length === 2) {
-  // Check if wiki is initialized
-  try {
-    const config = configStore.load();
-    const wikiManager = new WikiManager(config.wikiPath);
-
-    if (!wikiManager.isInitialized()) {
-      console.log(chalk.yellow('\nAI Brain not initialized.'));
-      console.log('Run "ai-brain init" to get started.\n');
-    }
-  } catch (error) {
-    // Config might not exist yet
-  }
-
-  program.help();
-}
 
 // Parse and execute
 program.parse(process.argv);

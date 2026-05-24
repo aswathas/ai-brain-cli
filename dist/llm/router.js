@@ -22,6 +22,8 @@ function getProvider(name) {
             return new (require('./providers/openrouter').OpenRouterProvider)();
         case 'ollama':
             return new (require('./providers/ollama').OllamaProvider)();
+        case 'minimax':
+            return new (require('./providers/minimax').MiniMaxProvider)();
         default:
             console.error(`Unknown provider: ${name}`);
             return null;
@@ -38,7 +40,7 @@ function getDefaultProvider() {
  * List all available providers
  */
 function listProviders() {
-    return ['anthropic', 'openai', 'google', 'deepseek', 'openrouter', 'ollama'];
+    return ['anthropic', 'openai', 'google', 'deepseek', 'openrouter', 'ollama', 'minimax'];
 }
 /**
  * Router that selects best provider based on requirements

@@ -18,6 +18,8 @@ export function getProvider(name: string): LLMProvider | null {
       return new (require('./providers/openrouter').OpenRouterProvider)();
     case 'ollama':
       return new (require('./providers/ollama').OllamaProvider)();
+    case 'minimax':
+      return new (require('./providers/minimax').MiniMaxProvider)();
     default:
       console.error(`Unknown provider: ${name}`);
       return null;
@@ -36,7 +38,7 @@ export function getDefaultProvider(): LLMProvider | null {
  * List all available providers
  */
 export function listProviders(): string[] {
-  return ['anthropic', 'openai', 'google', 'deepseek', 'openrouter', 'ollama'];
+  return ['anthropic', 'openai', 'google', 'deepseek', 'openrouter', 'ollama', 'minimax'];
 }
 
 /**

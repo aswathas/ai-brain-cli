@@ -1,5 +1,5 @@
 /**
- * Chat REPL command with time-travel and persona support
+ * Chat REPL - Claude-like interface with full features
  */
 export declare function chatCommand(args?: {
     persona?: string;
